@@ -1,48 +1,7 @@
 services:
-  postgres:
-    image: postgres:15
-    container_name: keycloak-postgres
-    environment:
-      POSTGRES_DB: keycloak
-      POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: keycloak
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - app-network
-
-  keycloak:
-    image: quay.io/keycloak/keycloak:24.0.1
-    container_name: keycloak
-    command:
-      - start-dev
-      - --spi-theme-cache-themes=false
-      - --spi-theme-cache-templates=false
-      - --spi-theme-static-max-age=-1
-    volumes:
-      - ./theme:/opt/keycloak/themes
-    environment:
-      KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
-      KC_DB_USERNAME: keycloak
-      KC_DB_PASSWORD: keycloak
-      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      KC_HOSTNAME: localhost
-      KC_HOSTNAME_PORT: "8080"
-      KC_HOSTNAME_STRICT: "false"
-      KC_HOSTNAME_STRICT_HTTPS: "false"
-    ports:
-      - "8080:8080"
-    depends_on:
-      - postgres
-    networks:
-      - app-network
 
   backend:
-    build: ..
+    image: hdfcas03/as03-backend-2:latest
     container_name: backend
     ports:
       - "8000:8000"
@@ -50,20 +9,15 @@ services:
       - .env
     environment:
       ENV: ${ENV}
-      KEYCLOAK_SERVER_URL: http://keycloak:8080
-    depends_on:
-      - keycloak
+      KEYCLOAK_SERVER_URL: ${KEYCLOAK_SERVER_URL}
     networks:
       - app-network
 
   gateway:
-    image: hdfcas03/as03-gateway-1:latest
+    image: hdfcas03/as03-gateway-2:latest
     container_name: api-gateway
     ports:
       - "80:80"
-    volumes:
-      - ../gateway/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
-      - ../gateway/lua:/usr/local/openresty/nginx/lua
     env_file:
       - .env
     environment:
@@ -76,18 +30,8 @@ services:
     networks:
       - app-network
 
-  mailhog:
-    image: mailhog/mailhog
-    container_name: mailhog
-    ports:
-      - "1025:1025"
-      - "8025:8025"
-    networks:
-      - app-network
-
   frontend:
-    build:
-      context: ../../AS-03-Frontend
+    image: hdfcas03/as03-frontend-2:latest
     container_name: as03-frontend
     ports:
       - "3000:80"
@@ -97,6 +41,3 @@ services:
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  postgres_data:
