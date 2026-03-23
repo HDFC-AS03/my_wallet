@@ -35,7 +35,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: "pip"
-          cache-dependency-path: AS-03-Backend/requirements.txt
+          cache-dependency-path: AS-03-Backend/app/requirements.txt
 
       - name: SAST & Quality Checks
         run: |
