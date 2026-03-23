@@ -9,7 +9,7 @@ RUN opm get openresty/lua-resty-limit-traffic
 
 # Copy nginx config and lua scripts
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY jwt_validator.lua /usr/local/openresty/nginx/lua/jwt_validator.lua
+COPY lua/jwt_validator.lua /usr/local/openresty/nginx/lua/jwt_validator.lua
 
 EXPOSE 80
 CMD ["openresty", "-g", "daemon off;"]
