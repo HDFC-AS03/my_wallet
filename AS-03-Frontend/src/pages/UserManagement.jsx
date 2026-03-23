@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 
-const API_BASE = "http://18.214.226.2";
+const API_BASE = "http://52.4.148.48";
 
 const ROLE_MAP = {
   Manager: "manager",

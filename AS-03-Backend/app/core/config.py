@@ -12,9 +12,9 @@ class Settings(BaseSettings):
     KEYCLOAK_REALM: str = "auth-realm"
     
     # CRITICAL: Point these to your EC2 Public IP
-    KEYCLOAK_SERVER_URL: str = "http://18.214.226.2:8080"
-    FRONTEND_URL: str = "http://18.214.226.2:3000"
-    GATEWAY_URL: str = "http://18.214.226.2"
+    KEYCLOAK_SERVER_URL: str = "http://52.4.148.48:8080"
+    FRONTEND_URL: str = "http://52.4.148.48:3000"
+    GATEWAY_URL: str = "http://52.4.148.48:80"
 
     KEYCLOAK_ADMIN_CLIENT_ID: str = "fast-api-admin-client"
     KEYCLOAK_ADMIN_CLIENT_SECRET: str = "JemMoYxTqjNK3c5zlKM26KFhnaPYg59z"

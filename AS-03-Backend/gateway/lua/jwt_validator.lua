@@ -16,7 +16,7 @@ local JWKS_URL = "http://keycloak:8080/auth/realms/auth-realm/protocol/openid-co
 
 local EXPECTED_ISSUERS = {
     ["http://keycloak:8080/auth/realms/auth-realm"] = true,
-    ["http://18.214.226.2:8080/auth/realms/auth-realm"] = true,
+    ["http://52.4.148.48:8080/auth/realms/auth-realm"] = true,
     ["http://localhost:8080/auth/realms/auth-realm"] = true,
 }
 

@@ -1027,7 +1027,7 @@ function Dashboard() {
 
   useEffect(() => {
     if (timeLeft !== 30) return;
-    fetch("http://18.214.226.2:8000/refresh", {
+    fetch("http://52.4.148.48:8000/refresh", {
       method: "POST",
       credentials: "include",
     })
@@ -1118,7 +1118,7 @@ function Dashboard() {
                   e.preventDefault();
 
                   if (route) {
-                    window.open(`http://18.214.226.2${route}`, "_blank");
+                    window.open(`http://52.4.148.48${route}`, "_blank");
                     return;
                   }
 
