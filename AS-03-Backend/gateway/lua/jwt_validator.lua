@@ -12,12 +12,11 @@ local limit_req = require "resty.limit.req"
 -- Configuration
 -- ============================================================
 
-local JWKS_URL = "http://keycloak:8080/auth/realms/auth-realm/protocol/openid-connect/certs"
+local JWKS_URL = os.getenv("JWKS_URL")
 
 local EXPECTED_ISSUERS = {
-    ["http://keycloak:8080/auth/realms/auth-realm"] = true,
-    ["http://52.4.148.48:8080/auth/realms/auth-realm"] = true,
-    ["http://localhost:8080/auth/realms/auth-realm"] = true,
+    [os.getenv("JWT_ISSUER_1")] = true,
+    [os.getenv("JWT_ISSUER_2")] = true,
 }
 
 local EXPECTED_AUD = nil
