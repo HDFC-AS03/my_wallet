@@ -96,7 +96,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
-          cache-dependency-path: AS-03-Frontend/package-lock.json
+          cache-dependency-path: "**/package-lock.json" # <-- Changed this line
 
       - name: Install Dependencies & Build
         run: |
