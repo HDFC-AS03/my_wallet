@@ -1,6 +1,9 @@
 services:
-
   backend:
+    # Points to the AS-03-Backend folder
+    build: 
+      context: ../AS-03-Backend
+      dockerfile: Dockerfile
     image: hdfcas03/as03-backend-2:latest
     container_name: backend
     ports:
@@ -14,6 +17,10 @@ services:
       - app-network
 
   gateway:
+    # Points to the gateway folder inside AS-03-Backend
+    build:
+      context: ../AS-03-Backend/gateway
+      dockerfile: Dockerfile
     image: hdfcas03/as03-gateway-2:latest
     container_name: api-gateway
     ports:
@@ -31,6 +38,10 @@ services:
       - app-network
 
   frontend:
+    # Points to the AS-03-Frontend folder
+    build:
+      context: ../AS-03-Frontend
+      dockerfile: Dockerfile
     image: hdfcas03/as03-frontend-2:latest
     container_name: as03-frontend
     ports:
