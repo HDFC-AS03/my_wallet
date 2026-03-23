@@ -57,7 +57,7 @@ services:
       - app-network
 
   gateway:
-    build: ../gateway
+    image: hdfcas03/as03-gateway-1:latest
     container_name: api-gateway
     ports:
       - "80:80"
