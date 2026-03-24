@@ -43,7 +43,7 @@ function LandingPage() {
           <h2 className="landing-subtitle">A personal Wallet Platform</h2>
 
           <p className="landing-description">
-            BankDash is a secure and modern digital wallet platform
+            MyWallet is a secure and modern digital wallet platform
             that helps users manage transactions, monitor finances,
             and access role-based dashboards seamlessly.
           </p>
