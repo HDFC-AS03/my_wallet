@@ -13,9 +13,9 @@ concurrency:
 env:
   PYTHON_VERSION: "3.11"
   NODE_VERSION: "20"
-  BACKEND_IMAGE: hdfcas03/as03-backend-1
-  FRONTEND_IMAGE: hdfcas03/as03-frontend-1
-  GATEWAY_IMAGE: hdfcas03/as03-gateway-1
+  BACKEND_IMAGE: hdfcas03/as03-backend-2
+  FRONTEND_IMAGE: hdfcas03/as03-frontend-2
+  GATEWAY_IMAGE: hdfcas03/as03-gateway-2
 
 jobs:
   # ==========================================
@@ -72,10 +72,10 @@ jobs:
       - name: Container Scan (Trivy)
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: '${{ env.BACKEND_IMAGE }}:${{ github.sha }}'
-          format: 'table'
-          exit-code: '0'
-          severity: 'HIGH,CRITICAL'
+          image-ref: "${{ env.BACKEND_IMAGE }}:${{ github.sha }}"
+          format: "table"
+          exit-code: "0"
+          severity: "HIGH,CRITICAL"
 
   # ==========================================
   # FRONTEND CI (React / Vite)
@@ -96,7 +96,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
-          cache-dependency-path: "**/package-lock.json" # <-- Changed this line
+          cache-dependency-path: "**/package-lock.json"
 
       - name: Install Dependencies & Build
         run: |
@@ -150,7 +150,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
 
     steps:
-      - name: Deploy via SSH      
+      - name: Deploy via SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           EC2_HOST: ${{ secrets.EC2_HOST }}
@@ -158,5 +158,46 @@ jobs:
         run: |
           printf '%s\n' "$SSH_PRIVATE_KEY" > /tmp/key.pem
           chmod 600 /tmp/key.pem
-          ssh -i /tmp/key.pem -o StrictHostKeyChecking=no -o ServerAliveInterval=60 $EC2_USER@$EC2_HOST "cd ~/CI-CD-pipeline/docker-compose && docker compose pull && docker compose down && docker compose up -d && docker image prune -a -f"
+          ssh -i /tmp/key.pem \
+            -o StrictHostKeyChecking=no \
+            -o ServerAliveInterval=60 \
+            $EC2_USER@$EC2_HOST << 'ENDSSH'
+              set -e
+              cd ~/CI-CD-pipeline/docker-compose
+
+              # Pull latest images from DockerHub
+              sudo docker pull hdfcas03/as03-backend-2:latest
+              sudo docker pull hdfcas03/as03-frontend-2:latest
+              sudo docker pull hdfcas03/as03-gateway-2:latest
+
+              # Restart stack cleanly (avoids ContainerConfig bug in docker-compose v1)
+              sudo docker-compose down
+              sudo docker-compose up -d
+
+              # Wait for containers to stabilize
+              sleep 5
+
+              # Health check
+              echo "=== Container Status ==="
+              sudo docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+              echo "=== Gateway Logs (last 20 lines) ==="
+              sudo docker logs api-gateway --tail 20
+
+              echo "=== Backend Logs (last 10 lines) ==="
+              sudo docker logs backend --tail 10
+
+              # Prune old images to save disk space
+              sudo docker image prune -a -f
+
+          ENDSSH
           rm -f /tmp/key.pem
+
+      - name: Verify Deployment
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+        run: |
+          # Wait for services to be ready
+          sleep 10
+          # Check health endpoint
+          curl --fail --retry 3 --retry-delay 5 http://$EC2_HOST/health || echo "Health check failed - check logs"
