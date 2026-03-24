@@ -6,7 +6,7 @@ RUN opm get openresty/lua-resty-string
 RUN opm get cdbattags/lua-resty-jwt
 RUN opm get openresty/lua-resty-limit-traffic
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
 COPY lua/jwt_validator.lua /usr/local/openresty/nginx/lua/jwt_validator.lua
 
 EXPOSE 80
