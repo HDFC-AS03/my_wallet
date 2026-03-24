@@ -71,6 +71,8 @@ local crypto = ffi.load("crypto")
 local function send_error(status, message)
     ngx.status = status
     ngx.header["Content-Type"] = "application/json"
+    ngx.header["Access-Control-Allow-Origin"] = ngx.var.http_origin or "*"
+    ngx.header["Access-Control-Allow-Credentials"] = "true"
     ngx.say(cjson.encode({ error = message }))
     return ngx.exit(status)
 end
